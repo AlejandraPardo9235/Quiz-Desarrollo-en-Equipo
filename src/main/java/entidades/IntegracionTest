@@ -1,0 +1,37 @@
+/ test/dao/IntegrationTest.java
+package dao;
+
+import entidades.Ciudad;
+import entidades.Persona;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class IntegrationTest {
+    private EntityManager entityManager;
+    private CiudadDoo ciudadDoo;
+    private PersonaDoo personaDoo;
+
+    @BeforeEach
+    public void setup() {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("miUnidadPersistencia");
+        entityManager = emf.createEntityManager();
+        ciudadDoo = new CiudadDoo(entityManager);
+        personaDoo = new PersonaDoo(entityManager);
+    }
+
+    @Test
+    public void testCargarDatosSimultaneamente() {
+        List<Ciudad> ciudades = ciudadDoo.getAll(new String[] { "src/main/resources/ciudades.csv" });
+        List<Persona> personas = personaDoo.getAll(new String[] { "src/main/resources/personas.csv" });
+        
+        assertEquals(3, ciudades.size()); // Asume que el archivo tiene 3 entradas
+        assertEquals(3, personas.size()); // Asume que el archivo tiene 3 entradas
+    }
+}
